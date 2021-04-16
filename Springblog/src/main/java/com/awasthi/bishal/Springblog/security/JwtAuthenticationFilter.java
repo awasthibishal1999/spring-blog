@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		 
 	String jwt	= getJwtFromRequest(request);
-	if(StringUtils.hasText(jwt)&& jwtProvider.validateToken(jwt)) {
+	if(StringUtils.hasText(jwt) && jwtProvider.validateToken(jwt)) {
 		
 		String username =  jwtProvider.getUsernameFromJWT(jwt);
 		
@@ -42,6 +42,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 		
 	}
+	
+	filterChain.doFilter(request, response);
 	
 	}
 

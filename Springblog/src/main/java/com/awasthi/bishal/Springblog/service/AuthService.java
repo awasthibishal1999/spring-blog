@@ -1,5 +1,7 @@
 package com.awasthi.bishal.Springblog.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -47,11 +49,21 @@ public class AuthService {
 		return passwordEncoder.encode(password);
 	}
 
-	public String login(LoginRequest loginRequest) {
-		 Authentication authenticate =  authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
-				 loginRequest.getPassword()));
-		 SecurityContextHolder.getContext().setAuthentication(authenticate);
-		return jwtProvider.generatetoken(authenticate);
+	 public AuthenticationResponse login(LoginRequest loginRequest) {
+	        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken
+	        		(loginRequest.getUsername(),
+	                loginRequest.getPassword()));
+	        SecurityContextHolder.getContext().setAuthentication(authenticate);
+	        String authenticationToken = jwtProvider.generatetoken(authenticate);
+	        return new AuthenticationResponse(authenticationToken, loginRequest.getUsername());
+	 }
+	        			 
+
+	public Optional<org.springframework.security.core.userdetails.User>getCurrentUser() {
+		org.springframework.security.core.userdetails.User	principal =	(org.springframework.security.
+				core.userdetails.User)SecurityContextHolder
+				.getContext().getAuthentication().getPrincipal();
+		return Optional.of(	principal);
 	}
 
 }
